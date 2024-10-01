@@ -629,6 +629,8 @@ class SynthesizerTrn(nn.Module):
       self.null = torch.LongTensor([0]).cuda()
       self.uncond_ratio = uncond_ratio
     self.cfg = cfg
+
+    
   @torch.no_grad()
   def infer(self, x_mel, w2v, length, f0):
 
@@ -674,7 +676,8 @@ class SynthesizerTrn(nn.Module):
     o = self.dec(z, e, g=g_interpolation)
 
     return o
-  @torch.no_grad()  
+  
+  @torch.no_grad()
   def f0_extraction(self, x_linear, x_mel, length, x_audio, noise_scale = 0.333):
 
     x_mask = torch.unsqueeze(commons.sequence_mask(length, x_mel.size(2)), 1).to(x_mel.dtype)
