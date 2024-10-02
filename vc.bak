@@ -18,11 +18,12 @@ CONFIG = {
     'ckpt': './pretrained/hierspeechpp_v1.1_ckpt.pth',
     'ckpt_sr24': './speechsr24k/G_340000.pth',
     'scale_norm': 'prompt',
-    'output_sr': 16000,
+    # 'output_sr': 24000,
     'noise_scale_vc': 0.333,
 }
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cpu')
 np.random.seed(1234)
 
 # Logging setup
@@ -132,8 +133,7 @@ def voice_conversion(source_speech, target_speech, models):
         t1 = time()
         converted_audio = net_g.voice_conversion_noise_control(x_w2v, x_length, trg_mel, trg_length2, denorm_f0, noise_scale=CONFIG['noise_scale_vc'])
         t2 = time()
-        if CONFIG['output_sr'] == 24000:
-            converted_audio = speechsr(converted_audio)
+        converted_audio = speechsr(converted_audio)
         t3 = time()
         converted_audio = converted_audio / torch.abs(converted_audio).max() * 32767.0 * torch.max(target_audio.abs())
         t4 = time()
@@ -143,13 +143,13 @@ def voice_conversion(source_speech, target_speech, models):
     print(f'voice_conversion_noise_control {t2-t1}\nspeechsr {t3-t2}\naudio_abs {t4-t3}\nint16 {t5-t4}')
 
     # Save output
-    file_name_s = os.path.splitext(os.path.basename(source_speech))[0]
-    file_name_t = os.path.splitext(os.path.basename(target_speech))[0]
-    file_name2 = f"{file_name_s}_to_{file_name_t}.wav"
-    output_file = os.path.join(CONFIG['output_dir'], file_name2)
-    write(output_file, CONFIG['output_sr'], converted_audio)
-    del converted_audio
-    return output_file
+    # file_name_s = os.path.splitext(os.path.basename(source_speech))[0]
+    # file_name_t = os.path.splitext(os.path.basename(target_speech))[0]
+    # file_name2 = f"{file_name_s}_to_{file_name_t}.wav"
+    # output_file = os.path.join(CONFIG['output_dir'], file_name2)
+    # write(output_file, CONFIG['output_sr'], converted_audio)
+
+    # return output_file
 
 if __name__ == '__main__':
     import warnings

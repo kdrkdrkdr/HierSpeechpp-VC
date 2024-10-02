@@ -1,4 +1,6 @@
 pretrained/hierspeechpp_v1.1_ckpt.pth
+pretrained/rmvpe.pt
+samples/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -342,7 +342,7 @@ class ResidualCouplingLayer(nn.Module):
             x1 = (x1 - m) * torch.exp(-logs) * x_mask
             x = torch.cat([x0, x1], 1)
             return x
-        
+
 def modulate(x, shift, scale):
     return x * (1 + scale.unsqueeze(1)) + shift.unsqueeze(1)
 
@@ -384,9 +384,9 @@ class FFN_Conv(nn.Module):
         x = self.act(x)
         x = self.drop(x)
         x = self.fc2(x*x_mask) * x_mask
-        x = self.drop(x) 
+        x = self.drop(x)
         return x.transpose(1,2)
-    
+
 class DiTConVBlock(nn.Module):
     """
     A DiT block with adaptive layer norm zero (adaLN-Zero) conditioning.
@@ -409,7 +409,7 @@ class DiTConVBlock(nn.Module):
         x = x + gate_msa.unsqueeze(1) * self.attn(modulate(self.norm1(x)*x_mask, shift_msa, scale_msa))*x_mask
         x = x + gate_mlp.unsqueeze(1) * self.mlp(modulate(self.norm2(x), shift_mlp, scale_mlp), x_mask.transpose(1,2))
         return x
-            
+
 class ResidualCouplingLayer_Transformer_simple(nn.Module):
     def __init__(self,
                  channels,
@@ -436,7 +436,7 @@ class ResidualCouplingLayer_Transformer_simple(nn.Module):
         ])
 
         self.post = nn.Conv1d(hidden_channels, self.half_channels * (2 - mean_only), 1)
-        
+
         self.initialize_weights()
 
         self.post.weight.data.zero_()
@@ -466,7 +466,7 @@ class ResidualCouplingLayer_Transformer_simple(nn.Module):
 
         for blk in self.enc_block:
             h = blk(h, g, x_mask)
-        
+
         x_mask = x_mask.transpose(1,2)
         h = h.transpose(1,2)
 
